@@ -95,4 +95,4 @@ jobs:
           DOCKER_IMAGE: ${{ env.DOCKER_IMAGE }}
           DOCKER_TAG: ${{ env.DOCKER_TAG }}
         run: |
-          railway up --service $RAILWAY_SERVICE --detach --image $DOCKER_IMAGE:$DOCKER_TAG
+          railway up --service $RAILWAY_SERVICE --detach -- --image $DOCKER_IMAGE:$DOCKER_TAG
