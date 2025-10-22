@@ -94,17 +94,19 @@ jobs:
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
-          RAILWAY_ENVIRONMENT_ID: ${{ secrets.RAILWAY_ENVIRONMENT_ID }}
         run: |
-          echo "🔹 Triggering deployment on Railway..."
-          http_code=$(curl -s -o /tmp/deploy_response.json -w "%{http_code}" -X POST \
+          echo "🔹 Triggering deployment on Railway (GraphQL v2)..."
+          response=$(curl -s -X POST https://api.railway.app/graphql/v2 \
             -H "Authorization: Bearer $RAILWAY_TOKEN" \
             -H "Content-Type: application/json" \
-            -d "{\"environmentId\": \"$RAILWAY_ENVIRONMENT_ID\"}" \
-            "https://backboard.railway.app/api/v1/services/$RAILWAY_SERVICE_ID/deployments")
-          if [ "$http_code" != "200" ]; then
-            echo "❌ Deployment failed (HTTP $http_code)"
-            cat /tmp/deploy_response.json
+            -d "{\"query\": \"mutation { deploymentTrigger(serviceId: \\\"$RAILWAY_SERVICE_ID\\\") { id status } }\"}")
+
+          echo "$response" | grep -q "deploymentTrigger"
+          if [ $? -ne 0 ]; then
+            echo "❌ Deployment failed:"
+            echo "$response"
             exit 1
           fi
+
           echo "✅ Deployment triggered successfully!"
+
