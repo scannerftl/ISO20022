@@ -1,17 +1,17 @@
 # Profil de production avec PostgreSQL
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/console_db
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
-    username: postgres
-    password: postgres
     hikari:
       maximum-pool-size: 10
       minimum-idle: 5
       connection-timeout: 30000
       idle-timeout: 600000
       max-lifetime: 1800000
-    
+
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
@@ -25,10 +25,6 @@ spring:
         order_inserts: true
         order_updates: true
 
-  h2:
-    console:
-      enabled: false
-
 logging:
   level:
     com.megatim.iso20022: INFO
@@ -37,3 +33,7 @@ logging:
     name: logs/console-log-api.log
     max-size: 10MB
     max-history: 30
+
+  h2:
+    console:
+      enabled: false
