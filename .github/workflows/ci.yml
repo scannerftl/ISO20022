@@ -86,10 +86,18 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.RAILWAY_TOKEN }}" \
             -H "Content-Type: application/json" \
             -d '{
-              "key": "IMAGE",
-              "value": "${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}"
+              "query": "mutation($input: VariableInput!) { upsertVariable(input: $input) { id } }",
+              "variables": {
+                "input": {
+                  "environmentId": "'${{ secrets.RAILWAY_ENVIRONMENT_ID }}'",
+                  "name": "IMAGE",
+                  "projectId": "'${{ secrets.RAILWAY_PROJECT_ID }}'",
+                  "serviceId": "'${{ secrets.RAILWAY_SERVICE_ID }}'",
+                  "value": "'${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}'"
+                }
+              }
             }' \
-            "https://backboard.railway.app/graphql/v1?query=mutation+%7B%0A++upsertVariable%28%0A++++input%3A+%7B%0A++++++environmentId%3A+%22${{ secrets.RAILWAY_ENVIRONMENT_ID }}"%2C%0A++++++name%3A+%22IMAGE"%2C%0A++++++projectId%3A+%22${{ secrets.RAILWAY_PROJECT_ID }}"%2C%0A++++++serviceId%3A+%22${{ secrets.RAILWAY_SERVICE_ID }}"%2C%0A++++++value%3A+%22${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}"%0A++++%7D%0A++%29+%7B%0A++++id%0A++%7D%0A%7D"
+            https://backboard.railway.app/graphql/v1
           
           # Déclencher le redéploiement
           curl -X POST \
