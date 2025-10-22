@@ -81,27 +81,24 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
+
       - name: Install Railway CLI
         run: |
           curl -fsSL https://railway.app/install.sh | sh
           echo "$HOME/.local/bin" >> $GITHUB_PATH
           railway --version
-      
-      - name: Setup and link Railway
+
+      - name: Authenticate Railway CLI
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
-          RAILWAY_SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
         run: |
-          # Create Railway config directory
-          mkdir -p ~/.railway
-          
-          # Create config file with token
-          echo "{"token":"$RAILWAY_TOKEN"}" > ~/.railway/config.json
-          
-          # Link project and service
-          npx railway link --project $RAILWAY_PROJECT_ID --service $RAILWAY_SERVICE_ID
+          railway login --apiKey $RAILWAY_TOKEN
+
+      - name: Link Railway project
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          railway link --project ${{ secrets.RAILWAY_PROJECT_ID }} --service ${{ secrets.RAILWAY_SERVICE_ID }}
 
       - name: Set environment variables
         env:
@@ -118,4 +115,5 @@ jobs:
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE_ID }}
-        run: railway up --service $RAILWAY_SERVICE --detach
+        run: |
+          railway up --service $RAILWAY_SERVICE --detach
