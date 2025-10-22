@@ -1,11 +1,13 @@
 # Profil de production avec PostgreSQL
 server:
   servlet:
-    context-path: /
+    context-path: /  # Le contexte racine
   forward-headers-strategy: framework
 
+# Configuration de l'application
 app:
-  base-url: ${RAILWAY_PUBLIC_DOMAIN}
+  # Utilisation de la variable d'environnement sans ajout de préfixe
+  base-url: https://${RAILWAY_PUBLIC_DOMAIN}
   api-docs: /v3/api-docs
   swagger-ui: /swagger-ui.html
   actuator: /actuator

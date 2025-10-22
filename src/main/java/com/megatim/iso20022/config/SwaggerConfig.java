@@ -11,22 +11,37 @@ import java.util.Arrays;
 @Configuration
 public class SwaggerConfig {
 
+    @Value("${server.servlet.context-path:/}")
+    private String contextPath;
+
     @Value("${app.base-url:http://localhost:8080}")
     private String baseUrl;
 
     @Bean
     public OpenAPI customOpenAPI() {
-        // Nettoyer l'URL de base pour éviter les doublons
+        // Nettoyer les URLs
         String cleanBaseUrl = baseUrl;
         if (cleanBaseUrl.endsWith("/")) {
             cleanBaseUrl = cleanBaseUrl.substring(0, cleanBaseUrl.length() - 1);
         }
         
+        // S'assurer que le contextPath commence par /
+        String cleanContextPath = contextPath;
+        if (!cleanContextPath.startsWith("/")) {
+            cleanContextPath = "/" + cleanContextPath;
+        }
+        if (cleanContextPath.endsWith("/")) {
+            cleanContextPath = cleanContextPath.substring(0, cleanContextPath.length() - 1);
+        }
+        
+        // Créer l'URL complète
+        String serverUrl = cleanBaseUrl + cleanContextPath;
+        
         Server server = new Server();
-        server.setUrl(cleanBaseUrl);
+        server.setUrl(serverUrl);
         server.setDescription("Serveur de production");
         
-        // Ajouter le serveur de développement
+        // Serveur de développement
         Server devServer = new Server();
         devServer.setUrl("http://localhost:8080");
         devServer.setDescription("Serveur local (développement)");
