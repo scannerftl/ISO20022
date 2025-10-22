@@ -3,7 +3,7 @@ builder = "nixpacks"
 
 [deploy]
 # Attendre que la DB Railway soit prête
-startCommand = "./wait-for-it.sh $PGHOST:$PGPORT -- java -jar target/*.jar --spring.profiles.active=prod"
+startCommand = "java -jar target/*.jar --spring.profiles.active=prod"
 
 [environment]
 NODE_ENV = "production"
