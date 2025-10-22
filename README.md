@@ -198,10 +198,5 @@ curl http://localhost:8080/api/log-console-items/1
 
 Consultez la documentation complète dans les fichiers `README_*.md` et `GUIDE_DEMARRAGE_COMPLET.md`.
 
-## 📄 Licence
-
-Propriétaire - © 2024 Megatim ISO20022
-
----
 
 **Développé avec ❤️ pour la gestion des logs console ISO20022**
