@@ -84,22 +84,21 @@ jobs:
         
       - name: Install Railway CLI
         run: |
-          curl -fsSL https://cli.railway.app/install.sh | sh
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          npm install -g @railway/cli
+          echo "$(npm root -g)/@railway/cli/bin" >> $GITHUB_PATH
           
       - name: Login to Railway
         run: railway login --token ${{ secrets.RAILWAY_TOKEN }}
         
-      - name: Link to Railway project
-        run: railway link ${{ secrets.RAILWAY_PROJECT_ID }}
-        
       - name: Set environment variables
         run: |
-          railway variables set IMAGE=${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }} \
+          railway variables set \
+            IMAGE=${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }} \
             SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }} \
             SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }} \
             SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }} \
             SPRING_PROFILES_ACTIVE=prod
             
       - name: Deploy to Railway
-        run: railway up --service ${{ secrets.RAILWAY_SERVICE_ID }} --detach
+        run: |
+          railway up --service ${{ secrets.RAILWAY_SERVICE_ID }} --detach
