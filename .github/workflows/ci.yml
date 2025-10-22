@@ -90,49 +90,6 @@ jobs:
             fi
           done
 
-      - name: Update Railway environment variables
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
-          RAILWAY_SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
-          RAILWAY_ENVIRONMENT_ID: ${{ secrets.RAILWAY_ENVIRONMENT_ID }}
-          DOCKER_IMAGE: ${{ env.DOCKER_IMAGE }}
-          DOCKER_TAG: ${{ env.DOCKER_TAG }}
-          SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
-          SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
-          SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
-        run: |
-          declare -A vars
-          vars[SPRING_DATASOURCE_URL]="$SPRING_DATASOURCE_URL"
-          vars[SPRING_DATASOURCE_USERNAME]="$SPRING_DATASOURCE_USERNAME"
-          vars[SPRING_DATASOURCE_PASSWORD]="$SPRING_DATASOURCE_PASSWORD"
-
-          for name in "${!vars[@]}"; do
-            echo "🔹 Setting $name on Railway..."
-            response=$(curl -s -w "%{http_code}" -o /tmp/railway_response.json -X POST \
-              -H "Authorization: Bearer $RAILWAY_TOKEN" \
-              -H "Content-Type: application/json" \
-              -d "{
-                \"query\": \"mutation(\$input: VariableInput!) { upsertVariable(input: \$input) { id } }\",
-                \"variables\": {
-                  \"input\": {
-                    \"environmentId\": \"$RAILWAY_ENVIRONMENT_ID\",
-                    \"name\": \"$name\",
-                    \"projectId\": \"$RAILWAY_PROJECT_ID\",
-                    \"serviceId\": \"$RAILWAY_SERVICE_ID\",
-                    \"value\": \"${vars[$name]}\"
-                  }
-                }
-              }" \
-              https://backboard.railway.app/graphql/v1)
-            code=$(tail -n1 <<< "$response")
-            if [ "$code" != "200" ]; then
-              echo "❌ Failed to set $name (HTTP $code)"
-              cat /tmp/railway_response.json
-              exit 1
-            fi
-          done
-
       - name: Trigger Railway deployment
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
