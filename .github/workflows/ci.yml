@@ -83,29 +83,29 @@ jobs:
         uses: actions/checkout@v4
         
       - name: Install Railway CLI
-        run: npm install -g @railway/cli
+        run: |
+          curl -fsSL https://railway.app/install.sh | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          railway --version
       
-      - name: Setup Railway environment
+      - name: Link Railway project
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: echo "RAILWAY_TOKEN=${RAILWAY_TOKEN}" >> $GITHUB_ENV
+        run: railway link --project ${{ secrets.RAILWAY_PROJECT_ID }} --service ${{ secrets.RAILWAY_SERVICE_ID }}
 
       - name: Set environment variables
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_PROJECT: ${{ secrets.RAILWAY_PROJECT_ID }}
           RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE_ID }}
         run: |
-          # Remplace `add` par `set`
-          npx railway variables set IMAGE ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }} --service $RAILWAY_SERVICE
-          npx railway variables set SPRING_DATASOURCE_URL "${{ secrets.SPRING_DATASOURCE_URL }}" --service $RAILWAY_SERVICE
-          npx railway variables set SPRING_DATASOURCE_USERNAME "${{ secrets.SPRING_DATASOURCE_USERNAME }}" --service $RAILWAY_SERVICE
-          npx railway variables set SPRING_DATASOURCE_PASSWORD "${{ secrets.SPRING_DATASOURCE_PASSWORD }}" --service $RAILWAY_SERVICE
-          npx railway variables set SPRING_PROFILES_ACTIVE prod --service $RAILWAY_SERVICE
+          railway variables set IMAGE=${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }} --service $RAILWAY_SERVICE
+          railway variables set SPRING_DATASOURCE_URL="${{ secrets.SPRING_DATASOURCE_URL }}" --service $RAILWAY_SERVICE
+          railway variables set SPRING_DATASOURCE_USERNAME="${{ secrets.SPRING_DATASOURCE_USERNAME }}" --service $RAILWAY_SERVICE
+          railway variables set SPRING_DATASOURCE_PASSWORD="${{ secrets.SPRING_DATASOURCE_PASSWORD }}" --service $RAILWAY_SERVICE
+          railway variables set SPRING_PROFILES_ACTIVE=prod --service $RAILWAY_SERVICE
 
       - name: Deploy to Railway
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_PROJECT: ${{ secrets.RAILWAY_PROJECT_ID }}
           RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE_ID }}
-        run: npx railway up --service $RAILWAY_SERVICE --detach
+        run: railway up --service $RAILWAY_SERVICE --detach
