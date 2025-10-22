@@ -91,7 +91,7 @@ jobs:
       - name: Authenticate Railway CLI
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: railway login --apiKey $RAILWAY_TOKEN
+        run: echo "$RAILWAY_TOKEN" | railway login
         
       - name: Link Railway project
         run: railway link --project ${{ secrets.RAILWAY_PROJECT_ID }} --service ${{ secrets.RAILWAY_SERVICE_ID }}
