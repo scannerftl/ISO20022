@@ -26,11 +26,11 @@ public class OpenApiConfig {
 
         Contact contact = new Contact();
         contact.setName("Équipe ISO20022");
-        contact.setEmail("support@megatim.com");
+        contact.setEmail("leonelfofou98@gmail.com");
 
         License license = new License()
-                .name("Propriétaire")
-                .url("https://www.megatim.com");
+                .name("MIT License")
+                .url("https://opensource.org/licenses/MIT");
 
         Info info = new Info()
                 .title("API Console Log ISO20022")
