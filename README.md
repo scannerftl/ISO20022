@@ -1,10 +1,18 @@
 # Console Log API - Projet Spring Boot Complet
 
 [![Java](https://img.shields.io/badge/Java-11+-orange.svg)](https://adoptium.net/)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template?template=https%3A%2F%2Fgithub.com%2Fscannerftl%2FISO20022&envs=SPRING_DATASOURCE_URL%2CSPRING_DATASOURCE_USERNAME%2CSPRING_DATASOURCE_PASSWORD&SPRING_DATASOURCE_URLLabel=DATABASE_URL&SPRING_DATASOURCE_USERNAMELabel=DATABASE_USER&SPRING_DATASOURCE_PASSWORDLabel=DATABASE_PASSWORD&referralCode=YOUR_REFERRAL_CODE)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7.18-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![Maven](https://img.shields.io/badge/Maven-3.6+-blue.svg)](https://maven.apache.org/)
 
 API REST complète pour la gestion des logs de console ISO20022 avec Spring Boot.
+
+## 🌐 Déploiement
+
+L'application est déployée sur Railway : [https://iso20022-console-log-production.up.railway.app](https://iso20022-console-log-production.up.railway.app)
+
+[![Swagger UI](https://img.shields.io/badge/Swagger-UI-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white)](https://iso20022-console-log-production.up.railway.app/swagger-ui.html)
+[![API Docs](https://img.shields.io/badge/API-Docs-%23007EC6?style=for-the-badge)](https://iso20022-console-log-production.up.railway.app/v3/api-docs)
 
 ## 🚀 Démarrage Rapide
 
