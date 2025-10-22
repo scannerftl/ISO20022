@@ -2,7 +2,7 @@
 builder = "nixpacks"
 
 [deploy]
-startCommand = "mvn spring-boot:run -Dspring-boot.run.profiles=prod"
+# Utilisation de la commande par défaut du conteneur
 
 [environment]
 NODE_ENV = "production"
