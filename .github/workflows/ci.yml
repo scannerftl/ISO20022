@@ -67,46 +67,29 @@ jobs:
           cache-to: type=gha,mode=max
 
   deploy-to-railway:
-    name: Deploy to Railway via API
+    name: Deploy to Railway
     needs: build-and-push-docker
     runs-on: ubuntu-latest
+    container: ghcr.io/railwayapp/cli:latest
+    env:
+      IMAGE: ghcr.io/${{ github.repository_owner }}/iso20022-console-log:${{ github.sha }}
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      SVC_ID: ${{ secrets.RAILWAY_SERVICE_ID }} # ton service Railway
+      SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
+      SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
+      SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+      SPRING_PROFILES_ACTIVE: prod
+
     steps:
-      - name: Check required secrets
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
-          RAILWAY_SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
-          RAILWAY_ENVIRONMENT_ID: ${{ secrets.RAILWAY_ENVIRONMENT_ID }}
-          SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
-          SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
-          SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+      - uses: actions/checkout@v4
+
+      - name: Set Railway environment variables
         run: |
-          required_secrets=("RAILWAY_TOKEN" "RAILWAY_PROJECT_ID" "RAILWAY_SERVICE_ID" "RAILWAY_ENVIRONMENT_ID" "SPRING_DATASOURCE_URL" "SPRING_DATASOURCE_USERNAME" "SPRING_DATASOURCE_PASSWORD")
-          for s in "${required_secrets[@]}"; do
-            secret_value=$(eval echo \$$s)
-            if [ -z "${secret_value}" ]; then
-              echo "❌ Secret $s is missing"
-              exit 1
-            fi
-          done
+          railway variables set IMAGE=$IMAGE --service $SVC_ID
+          railway variables set SPRING_DATASOURCE_URL=$SPRING_DATASOURCE_URL --service $SVC_ID
+          railway variables set SPRING_DATASOURCE_USERNAME=$SPRING_DATASOURCE_USERNAME --service $SVC_ID
+          railway variables set SPRING_DATASOURCE_PASSWORD=$SPRING_DATASOURCE_PASSWORD --service $SVC_ID
+          railway variables set SPRING_PROFILES_ACTIVE=$SPRING_PROFILES_ACTIVE --service $SVC_ID
 
-      - name: Trigger Railway deployment
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
-        run: |
-          echo "🔹 Triggering deployment on Railway (GraphQL v2)..."
-          response=$(curl -s -X POST https://api.railway.app/graphql/v2 \
-            -H "Authorization: Bearer $RAILWAY_TOKEN" \
-            -H "Content-Type: application/json" \
-            -d "{\"query\": \"mutation { deploymentTrigger(serviceId: \\\"$RAILWAY_SERVICE_ID\\\") { id status } }\"}")
-
-          echo "$response" | grep -q "deploymentTrigger"
-          if [ $? -ne 0 ]; then
-            echo "❌ Deployment failed:"
-            echo "$response"
-            exit 1
-          fi
-
-          echo "✅ Deployment triggered successfully!"
-
+      - name: Deploy to Railway
+        run: railway up --service=$SVC_ID --detach
