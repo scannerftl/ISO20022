@@ -1,0 +1,45 @@
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "java -jar target/*.jar --spring.profiles.active=prod"
+
+[environment]
+NODE_ENV = "production"
+
+[healthcheck]
+path = "/actuator/health"
+timeout = 30
+interval = 60
+retries = 3
+start_period = 30
+
+[build.args]
+JAVA_VERSION = "11"
+
+[build.settings]
+installCommand = "mvn clean install -DskipTests"
+buildCommand = "mvn package -DskipTests"
+
+[[services]]
+name = "app"
+port = 8080
+
+  [services.env]
+  SPRING_DATASOURCE_URL = "${DATABASE_URL}"
+  SPRING_DATASOURCE_USERNAME = "${PGUSER}"
+  SPRING_DATASOURCE_PASSWORD = "${PGPASSWORD}"
+  SPRING_PROFILES_ACTIVE = "prod"
+
+[[services.checks]]
+name = "health"
+path = "/actuator/health"
+interval = 60
+timeout = 30
+
+[[services.checks]]
+name = "liveness"
+path = "/actuator/health/liveness"
+initialDelay = 60
+interval = 60
+timeout = 30

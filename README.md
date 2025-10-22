@@ -3,7 +3,6 @@
 [![Java](https://img.shields.io/badge/Java-11+-orange.svg)](https://adoptium.net/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7.18-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![Maven](https://img.shields.io/badge/Maven-3.6+-blue.svg)](https://maven.apache.org/)
-[![License](https://img.shields.io/badge/License-Proprietary-red.svg)]()
 
 API REST complète pour la gestion des logs de console ISO20022 avec Spring Boot.
 
