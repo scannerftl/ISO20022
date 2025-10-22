@@ -2,7 +2,7 @@
 builder = "nixpacks"
 
 [deploy]
-# Utilisation de la commande par défaut du conteneur
+startCommand = "java -jar app.jar --spring.profiles.active=prod"
 
 [environment]
 NODE_ENV = "production"
