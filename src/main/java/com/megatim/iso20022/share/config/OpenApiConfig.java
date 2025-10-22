@@ -5,6 +5,7 @@ import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.servers.Server;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,11 +15,14 @@ import java.util.List;
 @Configuration
 public class OpenApiConfig {
 
+    @Value("${app.base-url}")
+    private String baseUrl;
+
     @Bean
     public OpenAPI consoleLogOpenAPI() {
-        Server localServer = new Server();
-        localServer.setUrl("http://localhost:8080");
-        localServer.setDescription("Serveur local");
+        Server server = new Server();
+        server.setUrl(baseUrl);
+        server.setDescription("Serveur de production");
 
         Contact contact = new Contact();
         contact.setName("Équipe ISO20022");
@@ -37,8 +41,13 @@ public class OpenApiConfig {
                 .contact(contact)
                 .license(license);
 
+        // Si vous souhaitez conserver le serveur local en développement
+        Server localServer = new Server();
+        localServer.setUrl("http://localhost:8080");
+        localServer.setDescription("Serveur local (développement)");
+
         return new OpenAPI()
                 .info(info)
-                .servers(Arrays.asList(localServer));
+                .servers(Arrays.asList(server, localServer));
     }
 }
