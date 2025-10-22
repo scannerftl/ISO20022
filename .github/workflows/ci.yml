@@ -10,20 +10,15 @@ on:
 permissions:
   contents: read
   packages: write
-  
+
 env:
   DOCKER_IMAGE: ghcr.io/${{ github.repository_owner }}/iso20022-console-log
   DOCKER_TAG: ${{ github.sha }}
-
-defaults:
-  run:
-    working-directory: ./
 
 jobs:
   build:
     name: Build and Test
     runs-on: ubuntu-latest
-    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -46,7 +41,6 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
-    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -77,50 +71,85 @@ jobs:
     needs: build-and-push-docker
     runs-on: ubuntu-latest
     steps:
-      - name: Set environment variables for Railway
+      - name: Check required secrets
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
           RAILWAY_SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
+          RAILWAY_ENVIRONMENT_ID: ${{ secrets.RAILWAY_ENVIRONMENT_ID }}
+          SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
+          SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
+          SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
         run: |
-          # Tableau des variables à mettre à jour
-          declare -A RAILWAY_VARS
-          RAILWAY_VARS[IMAGE]="${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}"
-          RAILWAY_VARS[SPRING_DATASOURCE_URL]="${{ secrets.SPRING_DATASOURCE_URL }}"
-          RAILWAY_VARS[SPRING_DATASOURCE_USERNAME]="${{ secrets.SPRING_DATASOURCE_USERNAME }}"
-          RAILWAY_VARS[SPRING_DATASOURCE_PASSWORD]="${{ secrets.SPRING_DATASOURCE_PASSWORD }}"
-          RAILWAY_VARS[SPRING_PROFILES_ACTIVE]="prod"
+          required_secrets=("RAILWAY_TOKEN" "RAILWAY_PROJECT_ID" "RAILWAY_SERVICE_ID" "RAILWAY_ENVIRONMENT_ID" "SPRING_DATASOURCE_URL" "SPRING_DATASOURCE_USERNAME" "SPRING_DATASOURCE_PASSWORD")
+          for s in "${required_secrets[@]}"; do
+            secret_value=$(eval echo \$$s)
+            if [ -z "${secret_value}" ]; then
+              echo "❌ Secret $s is missing"
+              exit 1
+            fi
+          done
 
-          # Mettre à jour chaque variable via l'API GraphQL Railway
-          for VAR_NAME in "${!RAILWAY_VARS[@]}"; do
-            VAR_VALUE=${RAILWAY_VARS[$VAR_NAME]}
-            echo "🔹 Setting $VAR_NAME on Railway..."
-            curl -s -X POST \
+      - name: Update Railway environment variables
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
+          RAILWAY_SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
+          RAILWAY_ENVIRONMENT_ID: ${{ secrets.RAILWAY_ENVIRONMENT_ID }}
+          DOCKER_IMAGE: ${{ env.DOCKER_IMAGE }}
+          DOCKER_TAG: ${{ env.DOCKER_TAG }}
+          SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
+          SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
+          SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+        run: |
+          declare -A vars
+          vars[IMAGE]="$DOCKER_IMAGE:$DOCKER_TAG"
+          vars[SPRING_PROFILES_ACTIVE]="prod"
+          vars[SPRING_DATASOURCE_URL]="$SPRING_DATASOURCE_URL"
+          vars[SPRING_DATASOURCE_USERNAME]="$SPRING_DATASOURCE_USERNAME"
+          vars[SPRING_DATASOURCE_PASSWORD]="$SPRING_DATASOURCE_PASSWORD"
+
+          for name in "${!vars[@]}"; do
+            echo "🔹 Setting $name on Railway..."
+            response=$(curl -s -w "%{http_code}" -o /tmp/railway_response.json -X POST \
               -H "Authorization: Bearer $RAILWAY_TOKEN" \
               -H "Content-Type: application/json" \
-              -d '{
-                "query": "mutation($input: VariableInput!) { upsertVariable(input: $input) { id } }",
-                "variables": {
-                  "input": {
-                    "environmentId": "'${{ secrets.RAILWAY_ENVIRONMENT_ID }}'",
-                    "name": "'"$VAR_NAME"'",
-                    "projectId": "'$RAILWAY_PROJECT_ID'",
-                    "serviceId": "'$RAILWAY_SERVICE_ID'",
-                    "value": "'"$VAR_VALUE"'"
+              -d "{
+                \"query\": \"mutation(\$input: VariableInput!) { upsertVariable(input: \$input) { id } }\",
+                \"variables\": {
+                  \"input\": {
+                    \"environmentId\": \"$RAILWAY_ENVIRONMENT_ID\",
+                    \"name\": \"$name\",
+                    \"projectId\": \"$RAILWAY_PROJECT_ID\",
+                    \"serviceId\": \"$RAILWAY_SERVICE_ID\",
+                    \"value\": \"${vars[$name]}\"
                   }
                 }
-              }' \
-              https://backboard.railway.app/graphql/v1
+              }" \
+              https://backboard.railway.app/graphql/v1)
+            code=$(tail -n1 <<< "$response")
+            if [ "$code" != "200" ]; then
+              echo "❌ Failed to set $name (HTTP $code)"
+              cat /tmp/railway_response.json
+              exit 1
+            fi
           done
 
       - name: Trigger Railway deployment
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
+          RAILWAY_ENVIRONMENT_ID: ${{ secrets.RAILWAY_ENVIRONMENT_ID }}
         run: |
           echo "🔹 Triggering deployment on Railway..."
-          curl -s -X POST \
+          http_code=$(curl -s -o /tmp/deploy_response.json -w "%{http_code}" -X POST \
             -H "Authorization: Bearer $RAILWAY_TOKEN" \
             -H "Content-Type: application/json" \
-            -d '{"environmentId": "'${{ secrets.RAILWAY_ENVIRONMENT_ID }}'"}' \
-            "https://backboard.railway.app/api/v1/services/$RAILWAY_SERVICE_ID/deployments"
+            -d "{\"environmentId\": \"$RAILWAY_ENVIRONMENT_ID\"}" \
+            "https://backboard.railway.app/api/v1/services/$RAILWAY_SERVICE_ID/deployments")
+          if [ "$http_code" != "200" ]; then
+            echo "❌ Deployment failed (HTTP $http_code)"
+            cat /tmp/deploy_response.json
+            exit 1
+          fi
+          echo "✅ Deployment triggered successfully!"
