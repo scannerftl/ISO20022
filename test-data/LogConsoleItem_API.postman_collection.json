@@ -1,0 +1,242 @@
+{
+  "info": {
+    "name": "LogConsoleItem API",
+    "description": "Collection complète pour tester l'API LogConsoleItem",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080/api/log-console-items",
+      "type": "string"
+    },
+    {
+      "key": "itemId",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "CRUD Operations",
+      "item": [
+        {
+          "name": "1. Create Simple LogConsoleItem",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"etapeTraitement\": \"TRAITEMENT_INITIAL\",\n  \"typeRejet\": null,\n  \"typeJobQueue\": \"QUEUE_PAIEMENT\",\n  \"typeSource\": \"SWIFT\",\n  \"typeMessage\": \"PACS008\",\n  \"versionMessage\": \"V1\",\n  \"sensOperation\": \"DEBIT\",\n  \"referenceMessage\": \"MSG20241022001\",\n  \"referenceMessageOriginal\": null,\n  \"versionMessageOriginale\": null,\n  \"siAnnulationMessageEntier\": false,\n  \"siConfirmationAnnulation\": false,\n  \"statutBeac\": \"EN_COURS\",\n  \"dateCreationMessage\": \"2024-10-22T08:30:00\",\n  \"nombreTransactions\": \"1\",\n  \"montantTotal\": \"150000.00\",\n  \"devise\": \"XAF\",\n  \"prioritePaiement\": \"HAUTE\",\n  \"dateReglementInterbancaire\": \"2024-10-22\",\n  \"methodeReglement\": \"RTGS\",\n  \"typeSystemeCompensation\": \"SYSTAC\",\n  \"categoriePaiement\": \"VIREMENT\",\n  \"codeBicEmetteur\": \"BICFRCM01\",\n  \"codeAgenceEmetteur\": \"AG001\",\n  \"codeBicDestinataire\": \"BICCMCM02\",\n  \"codeAgenceDestinataire\": \"AG002\",\n  \"dateCloture\": null,\n  \"dateRejet\": null,\n  \"motifRejet\": null,\n  \"motifPaiement\": \"Paiement fournisseur\",\n  \"informationsSupplementairesPaiement\": \"Facture N° 2024-001\",\n  \"nbreRejeu\": \"0\",\n  \"dateSession\": \"2024-10-22\",\n  \"logConsoleEntityType\": \"QUEU_IN\",\n  \"logConsoleDetails\": [],\n  \"informationsComplementaires\": []\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}",
+              "host": ["{{baseUrl}}"]
+            }
+          }
+        },
+        {
+          "name": "2. Get All LogConsoleItems",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}",
+              "host": ["{{baseUrl}}"]
+            }
+          }
+        },
+        {
+          "name": "3. Get LogConsoleItem by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/{{itemId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{itemId}}"]
+            }
+          }
+        },
+        {
+          "name": "4. Update LogConsoleItem",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"etapeTraitement\": \"TRAITEMENT_TERMINE\",\n  \"typeRejet\": null,\n  \"typeJobQueue\": \"QUEUE_PAIEMENT\",\n  \"typeSource\": \"SWIFT\",\n  \"typeMessage\": \"PACS008\",\n  \"versionMessage\": \"V1\",\n  \"sensOperation\": \"DEBIT\",\n  \"referenceMessage\": \"MSG20241022001\",\n  \"referenceMessageOriginal\": null,\n  \"versionMessageOriginale\": null,\n  \"siAnnulationMessageEntier\": false,\n  \"siConfirmationAnnulation\": false,\n  \"statutBeac\": \"COMPLETE\",\n  \"dateCreationMessage\": \"2024-10-22T08:30:00\",\n  \"nombreTransactions\": \"1\",\n  \"montantTotal\": \"150000.00\",\n  \"devise\": \"XAF\",\n  \"prioritePaiement\": \"HAUTE\",\n  \"dateReglementInterbancaire\": \"2024-10-22\",\n  \"methodeReglement\": \"RTGS\",\n  \"typeSystemeCompensation\": \"SYSTAC\",\n  \"categoriePaiement\": \"VIREMENT\",\n  \"codeBicEmetteur\": \"BICFRCM01\",\n  \"codeAgenceEmetteur\": \"AG001\",\n  \"codeBicDestinataire\": \"BICCMCM02\",\n  \"codeAgenceDestinataire\": \"AG002\",\n  \"dateCloture\": \"2024-10-22T10:00:00\",\n  \"dateRejet\": null,\n  \"motifRejet\": null,\n  \"motifPaiement\": \"Paiement fournisseur\",\n  \"informationsSupplementairesPaiement\": \"Facture N° 2024-001 - PAYEE\",\n  \"nbreRejeu\": \"0\",\n  \"dateSession\": \"2024-10-22\",\n  \"logConsoleEntityType\": \"QUEU_IN_ARCHIVAGE\",\n  \"logConsoleDetails\": [],\n  \"informationsComplementaires\": []\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/{{itemId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{itemId}}"]
+            }
+          }
+        },
+        {
+          "name": "5. Delete LogConsoleItem",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/{{itemId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{itemId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Search Operations",
+      "item": [
+        {
+          "name": "Search by Entity Type",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/search/by-entity-type?type=QUEU_IN",
+              "host": ["{{baseUrl}}"],
+              "path": ["search", "by-entity-type"],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "QUEU_IN"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search by Reference Message",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/search/by-reference?reference=MSG20241022001",
+              "host": ["{{baseUrl}}"],
+              "path": ["search", "by-reference"],
+              "query": [
+                {
+                  "key": "reference",
+                  "value": "MSG20241022001"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search by Type Message",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/search/by-type-message?type=PACS008",
+              "host": ["{{baseUrl}}"],
+              "path": ["search", "by-type-message"],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "PACS008"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search by Date Session",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/search/by-date-session?date=2024-10-22",
+              "host": ["{{baseUrl}}"],
+              "path": ["search", "by-date-session"],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2024-10-22"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search by BIC Code",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/search/by-bic?code=BICFRCM01",
+              "host": ["{{baseUrl}}"],
+              "path": ["search", "by-bic"],
+              "query": [
+                {
+                  "key": "code",
+                  "value": "BICFRCM01"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Advanced Examples",
+      "item": [
+        {
+          "name": "Create Complete with Relations",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"etapeTraitement\": \"TRAITEMENT_INITIAL\",\n  \"typeRejet\": null,\n  \"typeJobQueue\": \"QUEUE_PAIEMENT\",\n  \"typeSource\": \"SWIFT\",\n  \"typeMessage\": \"PACS008\",\n  \"versionMessage\": \"V1\",\n  \"sensOperation\": \"DEBIT\",\n  \"referenceMessage\": \"MSG20241022002\",\n  \"referenceMessageOriginal\": null,\n  \"versionMessageOriginale\": null,\n  \"siAnnulationMessageEntier\": false,\n  \"siConfirmationAnnulation\": false,\n  \"statutBeac\": \"EN_COURS\",\n  \"dateCreationMessage\": \"2024-10-22T09:15:00\",\n  \"nombreTransactions\": \"2\",\n  \"montantTotal\": \"500000.00\",\n  \"devise\": \"XAF\",\n  \"prioritePaiement\": \"NORMALE\",\n  \"dateReglementInterbancaire\": \"2024-10-22\",\n  \"methodeReglement\": \"RTGS\",\n  \"typeSystemeCompensation\": \"SYSTAC\",\n  \"categoriePaiement\": \"VIREMENT\",\n  \"codeBicEmetteur\": \"BICFRCM01\",\n  \"codeAgenceEmetteur\": \"AG001\",\n  \"codeBicDestinataire\": \"BICCMCM02\",\n  \"codeAgenceDestinataire\": \"AG002\",\n  \"dateCloture\": null,\n  \"dateRejet\": null,\n  \"motifRejet\": null,\n  \"motifPaiement\": \"Paiement salaires\",\n  \"informationsSupplementairesPaiement\": \"Lot salaires octobre 2024\",\n  \"nbreRejeu\": \"0\",\n  \"dateSession\": \"2024-10-22\",\n  \"logConsoleEntityType\": \"QUEU_IN\",\n  \"logConsoleDetails\": [\n    {\n      \"referenceTransaction\": \"TRX001\",\n      \"identifiantEndToEnd\": \"E2E-2024-001\",\n      \"identifiantSystemeInformation\": \"SYS-INFO-001\",\n      \"codeBicBanqueClientDebiteurUltime\": \"BICFRCM01\",\n      \"nomClientDebiteurUltime\": \"ENTREPRISE ABC SARL\",\n      \"idCompteClientDebiteurUltime\": \"CM21001234567890123456789\",\n      \"codeBicBanqueClientBeneficiaireUltime\": \"BICCMCM02\",\n      \"nomClientBeneficiaireUltime\": \"DUPONT Jean\",\n      \"idCompteClientBeneficiaireUltime\": \"CM21009876543210987654321\",\n      \"montantTransaction\": \"250000.00\",\n      \"dateReglement\": \"2024-10-22\",\n      \"statutBeac\": \"ACCEPTE\",\n      \"informationIdentificationsEmetteur\": [\n        {\n          \"identification\": \"ID-EMETTEUR-001\",\n          \"libelle\": \"Numéro employé\"\n        }\n      ],\n      \"informationIdentificationsDestinataire\": [\n        {\n          \"identification\": \"ID-DEST-001\",\n          \"libelle\": \"Numéro sécurité sociale\"\n        }\n      ]\n    }\n  ],\n  \"informationsComplementaires\": [\n    {\n      \"cle\": \"departement\",\n      \"valeur\": \"Ressources Humaines\"\n    },\n    {\n      \"cle\": \"periode\",\n      \"valeur\": \"Octobre 2024\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}",
+              "host": ["{{baseUrl}}"]
+            }
+          }
+        },
+        {
+          "name": "Create Error Item",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"etapeTraitement\": \"TRAITEMENT_ERREUR\",\n  \"typeRejet\": \"REJET_TECHNIQUE\",\n  \"typeJobQueue\": \"QUEUE_ERROR\",\n  \"typeSource\": \"SWIFT\",\n  \"typeMessage\": \"PACS002\",\n  \"versionMessage\": \"V1\",\n  \"sensOperation\": \"CREDIT\",\n  \"referenceMessage\": \"MSG20241022ERR001\",\n  \"referenceMessageOriginal\": \"MSG20241022001\",\n  \"versionMessageOriginale\": \"V1\",\n  \"siAnnulationMessageEntier\": false,\n  \"siConfirmationAnnulation\": false,\n  \"statutBeac\": \"REJETE\",\n  \"dateCreationMessage\": \"2024-10-22T10:30:00\",\n  \"nombreTransactions\": \"1\",\n  \"montantTotal\": \"75000.00\",\n  \"devise\": \"XAF\",\n  \"prioritePaiement\": \"HAUTE\",\n  \"dateReglementInterbancaire\": \"2024-10-22\",\n  \"methodeReglement\": \"RTGS\",\n  \"typeSystemeCompensation\": \"SYSTAC\",\n  \"categoriePaiement\": \"VIREMENT\",\n  \"codeBicEmetteur\": \"BICFRCM01\",\n  \"codeAgenceEmetteur\": \"AG001\",\n  \"codeBicDestinataire\": \"BICCMCM02\",\n  \"codeAgenceDestinataire\": \"AG002\",\n  \"dateCloture\": null,\n  \"dateRejet\": \"2024-10-22T10:30:00\",\n  \"motifRejet\": \"Compte destinataire inexistant\",\n  \"motifPaiement\": \"Remboursement client\",\n  \"informationsSupplementairesPaiement\": \"Erreur validation compte\",\n  \"nbreRejeu\": \"1\",\n  \"dateSession\": \"2024-10-22\",\n  \"logConsoleEntityType\": \"QUEU_ERROR\",\n  \"logConsoleDetails\": [],\n  \"informationsComplementaires\": [\n    {\n      \"cle\": \"code_erreur\",\n      \"valeur\": \"ERR_COMPTE_INVALIDE\"\n    },\n    {\n      \"cle\": \"action_requise\",\n      \"valeur\": \"Vérifier compte destinataire\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}",
+              "host": ["{{baseUrl}}"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

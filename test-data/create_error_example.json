@@ -1,0 +1,73 @@
+{
+  "etapeTraitement": "TRAITEMENT_ERREUR",
+  "typeRejet": "REJET_TECHNIQUE",
+  "typeJobQueue": "QUEUE_ERROR",
+  "typeSource": "SWIFT",
+  "typeMessage": "PACS002",
+  "versionMessage": "V1",
+  "sensOperation": "CREDIT",
+  "referenceMessage": "MSG20241022ERR001",
+  "referenceMessageOriginal": "MSG20241022001",
+  "versionMessageOriginale": "V1",
+  "siAnnulationMessageEntier": false,
+  "siConfirmationAnnulation": false,
+  "statutBeac": "REJETE",
+  "dateCreationMessage": "2024-10-22T10:30:00",
+  "nombreTransactions": "1",
+  "montantTotal": "75000.00",
+  "devise": "XAF",
+  "prioritePaiement": "HAUTE",
+  "dateReglementInterbancaire": "2024-10-22",
+  "methodeReglement": "RTGS",
+  "typeSystemeCompensation": "SYSTAC",
+  "categoriePaiement": "VIREMENT",
+  "codeBicEmetteur": "BICFRCM01",
+  "codeAgenceEmetteur": "AG001",
+  "codeBicDestinataire": "BICCMCM02",
+  "codeAgenceDestinataire": "AG002",
+  "dateCloture": null,
+  "dateRejet": "2024-10-22T10:30:00",
+  "motifRejet": "Compte destinataire inexistant",
+  "motifPaiement": "Remboursement client",
+  "informationsSupplementairesPaiement": "Erreur validation compte",
+  "nbreRejeu": "1",
+  "dateSession": "2024-10-22",
+  "logConsoleEntityType": "QUEU_ERROR",
+  "logConsoleDetails": [
+    {
+      "referenceTransaction": "TRX-ERR-001",
+      "identifiantEndToEnd": "E2E-2024-ERR-001",
+      "identifiantSystemeInformation": "SYS-INFO-ERR-001",
+      "codeBicBanqueClientDebiteurUltime": "BICFRCM01",
+      "nomClientDebiteurUltime": "COMMERCE XYZ",
+      "idCompteClientDebiteurUltime": "CM21001111222233334444555",
+      "codeBicBanqueClientBeneficiaireUltime": "BICCMCM02",
+      "nomClientBeneficiaireUltime": "CLIENT INCONNU",
+      "idCompteClientBeneficiaireUltime": "CM21009999888877776666555",
+      "montantTransaction": "75000.00",
+      "dateReglement": "2024-10-22",
+      "statutBeac": "REJETE",
+      "informationIdentificationsEmetteur": [
+        {
+          "identification": "ID-EMETTEUR-ERR-001",
+          "libelle": "Numéro commande"
+        }
+      ],
+      "informationIdentificationsDestinataire": []
+    }
+  ],
+  "informationsComplementaires": [
+    {
+      "cle": "code_erreur",
+      "valeur": "ERR_COMPTE_INVALIDE"
+    },
+    {
+      "cle": "tentative_rejeu",
+      "valeur": "1"
+    },
+    {
+      "cle": "action_requise",
+      "valeur": "Vérifier compte destinataire"
+    }
+  ]
+}
