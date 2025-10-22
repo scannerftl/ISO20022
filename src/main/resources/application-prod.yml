@@ -1,4 +1,16 @@
 # Profil de production avec PostgreSQL
+server:
+  servlet:
+    context-path: /
+  forward-headers-strategy: framework
+
+app:
+  base-url: ${RAILWAY_PUBLIC_DOMAIN:http://localhost:8080}
+  api-docs: /v3/api-docs
+  swagger-ui: /swagger-ui.html
+  actuator: /actuator
+  h2-console: /h2-console
+
 spring:
   datasource:
     url: ${SPRING_DATASOURCE_URL}
