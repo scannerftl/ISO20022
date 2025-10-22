@@ -96,12 +96,12 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_PROJECT: ${{ secrets.RAILWAY_PROJECT_ID }}
         run: |
-          npx railway variables set \
-            IMAGE=${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }} \
-            SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }} \
-            SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }} \
-            SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }} \
-            SPRING_PROFILES_ACTIVE=prod
+          # Set each variable individually
+          npx railway variables add IMAGE ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
+          npx railway variables add SPRING_DATASOURCE_URL "${{ secrets.SPRING_DATASOURCE_URL }}"
+          npx railway variables add SPRING_DATASOURCE_USERNAME "${{ secrets.SPRING_DATASOURCE_USERNAME }}"
+          npx railway variables add SPRING_DATASOURCE_PASSWORD "${{ secrets.SPRING_DATASOURCE_PASSWORD }}"
+          npx railway variables add SPRING_PROFILES_ACTIVE prod
             
       - name: Deploy to Railway
         env:
