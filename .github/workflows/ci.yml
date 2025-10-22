@@ -88,12 +88,6 @@ jobs:
           echo "$HOME/.local/bin" >> $GITHUB_PATH
           railway --version
 
-      - name: Authenticate Railway CLI
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: |
-          railway login --apiKey $RAILWAY_TOKEN
-
       - name: Link Railway project
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
@@ -104,8 +98,10 @@ jobs:
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE_ID }}
+          DOCKER_IMAGE: ${{ env.DOCKER_IMAGE }}
+          DOCKER_TAG: ${{ env.DOCKER_TAG }}
         run: |
-          railway variables set IMAGE=${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }} --service $RAILWAY_SERVICE
+          railway variables set IMAGE=$DOCKER_IMAGE:$DOCKER_TAG --service $RAILWAY_SERVICE
           railway variables set SPRING_DATASOURCE_URL="${{ secrets.SPRING_DATASOURCE_URL }}" --service $RAILWAY_SERVICE
           railway variables set SPRING_DATASOURCE_USERNAME="${{ secrets.SPRING_DATASOURCE_USERNAME }}" --service $RAILWAY_SERVICE
           railway variables set SPRING_DATASOURCE_PASSWORD="${{ secrets.SPRING_DATASOURCE_PASSWORD }}" --service $RAILWAY_SERVICE
@@ -117,3 +113,4 @@ jobs:
           RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE_ID }}
         run: |
           railway up --service $RAILWAY_SERVICE --detach
+
