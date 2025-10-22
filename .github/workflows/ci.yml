@@ -88,10 +88,12 @@ jobs:
           echo "$HOME/.local/bin" >> $GITHUB_PATH
           railway --version
       
-      - name: Authenticate Railway CLI
+      - name: Setup Railway environment
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: echo "$RAILWAY_TOKEN" | railway login
+        run: |
+          echo "RAILWAY_TOKEN=$RAILWAY_TOKEN" >> $GITHUB_ENV
+          echo "$HOME/.railway" >> $GITHUB_PATH
         
       - name: Link Railway project
         run: railway link --project ${{ secrets.RAILWAY_PROJECT_ID }} --service ${{ secrets.RAILWAY_SERVICE_ID }}
