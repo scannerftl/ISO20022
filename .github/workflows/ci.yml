@@ -79,24 +79,21 @@ jobs:
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
     
     steps:
-      - name: Install Railway CLI
+      - name: Deploy to Railway using API
         run: |
-          curl -fsSL https://cli.railway.app/install.sh | sh
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Link Railway project and service
-        run: |
-          railway link --project $RAILWAY_PROJECT_ID --service $RAILWAY_SERVICE_ID
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
-          RAILWAY_SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
-
-      - name: Update Railway service with new Docker image
-        run: |
-          railway variables set IMAGE=${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
-          railway up --service $RAILWAY_SERVICE_ID --detach
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
-          RAILWAY_SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
+          # Mettre à jour la variable d'environnement IMAGE
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.RAILWAY_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "key": "IMAGE",
+              "value": "${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}"
+            }' \
+            "https://backboard.railway.app/graphql/v1?query=mutation+%7B%0A++upsertVariable%28%0A++++input%3A+%7B%0A++++++environmentId%3A+%22${{ secrets.RAILWAY_ENVIRONMENT_ID }}"%2C%0A++++++name%3A+%22IMAGE"%2C%0A++++++projectId%3A+%22${{ secrets.RAILWAY_PROJECT_ID }}"%2C%0A++++++serviceId%3A+%22${{ secrets.RAILWAY_SERVICE_ID }}"%2C%0A++++++value%3A+%22${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}"%0A++++%7D%0A++%29+%7B%0A++++id%0A++%7D%0A%7D"
+          
+          # Déclencher le redéploiement
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.RAILWAY_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"environmentId": "'${{ secrets.RAILWAY_ENVIRONMENT_ID }}'"}' \
+            "https://backboard.railway.app/api/v1/services/${{ secrets.RAILWAY_SERVICE_ID }}/deployments"
