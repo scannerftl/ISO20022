@@ -77,7 +77,6 @@ jobs:
     needs: build-and-push-docker
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
-    
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -87,12 +86,6 @@ jobs:
           curl -fsSL https://railway.app/install.sh | sh
           echo "$HOME/.local/bin" >> $GITHUB_PATH
           railway --version
-
-      - name: Link Railway project
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: |
-          railway link --project ${{ secrets.RAILWAY_PROJECT_ID }} --service ${{ secrets.RAILWAY_SERVICE_ID }}
 
       - name: Set environment variables
         env:
@@ -113,4 +106,3 @@ jobs:
           RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE_ID }}
         run: |
           railway up --service $RAILWAY_SERVICE --detach
-
