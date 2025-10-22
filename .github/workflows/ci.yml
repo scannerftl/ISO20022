@@ -77,6 +77,7 @@ jobs:
     needs: build-and-push-docker
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -87,22 +88,11 @@ jobs:
           echo "$HOME/.local/bin" >> $GITHUB_PATH
           railway --version
 
-      - name: Set environment variables
+      - name: Deploy Docker image to Railway
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE_ID }}
           DOCKER_IMAGE: ${{ env.DOCKER_IMAGE }}
           DOCKER_TAG: ${{ env.DOCKER_TAG }}
         run: |
-          railway variables set IMAGE=$DOCKER_IMAGE:$DOCKER_TAG --service $RAILWAY_SERVICE
-          railway variables set SPRING_DATASOURCE_URL="${{ secrets.SPRING_DATASOURCE_URL }}" --service $RAILWAY_SERVICE
-          railway variables set SPRING_DATASOURCE_USERNAME="${{ secrets.SPRING_DATASOURCE_USERNAME }}" --service $RAILWAY_SERVICE
-          railway variables set SPRING_DATASOURCE_PASSWORD="${{ secrets.SPRING_DATASOURCE_PASSWORD }}" --service $RAILWAY_SERVICE
-          railway variables set SPRING_PROFILES_ACTIVE=prod --service $RAILWAY_SERVICE
-
-      - name: Deploy to Railway
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE_ID }}
-        run: |
-          railway up --service $RAILWAY_SERVICE --detach
+          railway up --service $RAILWAY_SERVICE --detach --image $DOCKER_IMAGE:$DOCKER_TAG
